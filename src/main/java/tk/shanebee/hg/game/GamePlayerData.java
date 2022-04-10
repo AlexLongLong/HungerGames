@@ -292,39 +292,55 @@ public class GamePlayerData extends Data {
             Location previousLocation = player.getLocation();
 
             // Teleport async into the arena so it loads a little more smoothly
+            Util.log("try TP");
             PaperLib.teleportAsync(player, loc).thenAccept(a -> {
-
-                PlayerData playerData = new PlayerData(player, game);
-                if (command && Config.savePreviousLocation) {
-                    playerData.setPreviousLocation(previousLocation);
-                }
-                playerManager.addPlayerData(playerData);
-                gameArenaData.board.setBoard(player);
-
-                heal(player);
-                freeze(player);
-                kills.put(player, 0);
-
-                if (players.size() == 1 && status == Status.READY)
-                    gameArenaData.setStatus(Status.WAITING);
-                if (players.size() >= game.gameArenaData.minPlayers && (status == Status.WAITING || status == Status.READY)) {
-                    game.startPreGame();
-                } else if (status == Status.WAITING) {
-                    String broadcast = lang.player_joined_game
-                            .replace("<arena>", gameArenaData.getName())
-                            .replace("<player>", player.getName()) + (gameArenaData.minPlayers - players.size() <= 0 ? "!" : ":" +
-                            lang.players_to_start.replace("<amount>", String.valueOf((gameArenaData.minPlayers - players.size()))));
-                    if (Config.broadcastJoinMessages) {
-                        Util.broadcast(broadcast);
-                    } else {
-                        msgAll(broadcast);
+                if(a)
+                {
+                    Util.log("TP Complete");
+                    PlayerData playerData = new PlayerData(player, game);
+                    Util.log("created player data");
+                    if (command && Config.savePreviousLocation) {
+                        playerData.setPreviousLocation(previousLocation);
                     }
+                    Util.log("Saved Pre Loc");
+                    playerManager.addPlayerData(playerData);
+                    gameArenaData.board.setBoard(player);
+                    Util.log("added player ");
+                    heal(player);
+                    freeze(player);
+                    kills.put(player, 0);
+                    Util.log("Heal freeze killreset");
+                    if (players.size() == 1 && status == Status.READY)
+                        gameArenaData.setStatus(Status.WAITING);
+                    Util.log("Set Arena wating");
+                    if (players.size() >= game.gameArenaData.minPlayers && (status == Status.WAITING || status == Status.READY)) {
+                        game.startPreGame();
+                        Util.log("Start arena");
+                    } else if (status == Status.WAITING) {
+                        String broadcast = lang.player_joined_game
+                                .replace("<arena>", gameArenaData.getName())
+                                .replace("<player>", player.getName()) + (gameArenaData.minPlayers - players.size() <= 0 ? "!" : ":" +
+                                lang.players_to_start.replace("<amount>", String.valueOf((gameArenaData.minPlayers - players.size()))));
+                        if (Config.broadcastJoinMessages) {
+                            Util.broadcast(broadcast);
+                        } else {
+                            msgAll(broadcast);
+                        }
+                        Util.log("Wait arena");
+                    }
+                    kitHelp(player);
+                    Util.log("Kithelp");
+                    game.gameBlockData.updateLobbyBlock();
+                    game.gameArenaData.updateBoards();
+                    game.gameCommandData.runCommands(CommandType.JOIN, player);
+                    Util.log("Run Game stuff");
+                    
                 }
-                kitHelp(player);
-
-                game.gameBlockData.updateLobbyBlock();
-                game.gameArenaData.updateBoards();
-                game.gameCommandData.runCommands(CommandType.JOIN, player);
+                else
+                {
+                    Util.log("TP Failed");
+                    Util.log("Player: " +player.getName() + " Location :" +loc.toString());
+                }
             });
         }
     }

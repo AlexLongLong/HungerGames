@@ -16,12 +16,14 @@ import tk.shanebee.hg.util.Util;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.bukkit.WorldBorder;
 
 public class ChestDropTask implements Runnable {
 
     private final Game game;
     private final int timerID;
     private final List<ChestDrop> chests = new ArrayList<>();
+    private final int chestRange = Config.randomChestRange;
 
     public ChestDropTask(Game game) {
         this.game = game;
@@ -30,8 +32,10 @@ public class ChestDropTask implements Runnable {
 
     public void run() {
         Bound bound = game.getGameArenaData().getBound();
-        Integer[] i = bound.getRandomLocs();
-
+        Integer[] i = getPos();
+        
+        
+           
         int x = i[0];
         int y = i[1];
         int z = i[2];
@@ -41,7 +45,7 @@ public class ChestDropTask implements Runnable {
             y--;
 
             if (y <= 0) {
-                i = bound.getRandomLocs();
+                i = getPos();
 
                 x = i[0];
                 y = i[1];
@@ -75,5 +79,80 @@ public class ChestDropTask implements Runnable {
         for (ChestDrop cd : chests) {
             if (cd != null) cd.remove();
         }
+    }
+    
+    private Integer[] getPos()
+    {
+        Bound bound = game.getGameArenaData().getBound();
+        WorldBorder border = bound.getWorld().getWorldBorder();
+        boolean Playerclose = false; 
+        Integer[] i = bound.getRandomLocs();
+        Util.log("New POS: " + i[0].toString() + " " +i[2].toString());
+        Location lBorder = new Location(bound.getWorld(), (double)i[0], (double)i[1], (double)i[2]);
+        if(chestRange >0)
+        {
+        for(UUID p : game.getGamePlayerData().getPlayers())
+            {
+                Player player = Bukkit.getPlayer(p);
+                if(player != null)
+                {
+                    Util.log("New Player Name: " + player.getName());
+                    Location lplayer = player.getLocation();
+                    int x = (int)lplayer.getX();
+                    int z = (int)lplayer.getZ();
+                    Util.log("New POS Player: " + Integer.toString(x)  + " " + Integer.toString(z));
+                    if((i[0]-chestRange) <= x && x <= (i[0]+chestRange))
+                    {
+                        Util.log("New Pos X");
+                        if((i[2]-chestRange) <= z && z <= (i[2]+chestRange))
+                        {
+                            Util.log("New Pos Z");
+                            Playerclose = true;
+                        }                            
+                    }
+                }
+            }
+        }else{
+            Playerclose = true;
+        }
+        int retry = 0;
+        while(!border.isInside(lBorder) || (!Playerclose && retry <= 100))
+        {
+            retry++;
+            Playerclose = false;
+            i = bound.getRandomLocs();
+            Util.log("New POS: " + i[0].toString() + " " +i[2].toString());
+            lBorder = new Location(bound.getWorld(), (double)i[0], (double)i[1], (double)i[2]);
+            if(chestRange >0)
+            {
+            for(UUID p : game.getGamePlayerData().getPlayers())
+                {
+                    Player player = Bukkit.getPlayer(p);
+                    
+                    if(player != null)
+                    {
+                        Util.log("New Player Name: " + player.getName());
+                        Location lplayer = player.getLocation();
+                        int x = (int)lplayer.getX();
+                        int z = (int)lplayer.getZ();
+                        Util.log("New POS Player: " + Integer.toString(x)  + " " + Integer.toString(z));
+                        if((i[0]-chestRange) <= x && x <=(i[0]+chestRange))
+                        {
+                            Util.log("New Pos X");
+                            if((i[2]-chestRange) <= z && z <=(i[2]+chestRange))
+                            {   
+                                Util.log("New Pos Z");
+                                Playerclose = true;
+                            }                            
+                        }
+                    }
+                }
+            }else
+            {
+                Playerclose = true;
+        }
+                
+        }
+        return i; 
     }
 }

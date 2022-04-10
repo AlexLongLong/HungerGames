@@ -1,10 +1,6 @@
 package tk.shanebee.hg.util;
 
-import de.tr7zw.changeme.nbtapi.NBTContainer;
-import de.tr7zw.changeme.nbtapi.NBTItem;
-import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
+
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -13,13 +9,13 @@ import org.bukkit.inventory.ItemStack;
  */
 public class NBTApi {
 
-    private boolean enabled = true;
+    private boolean enabled = false;
 
     public NBTApi() {
-        MinecraftVersion.replaceLogger(HgLogger.getLogger());
-        if (!isEnabled()) {
-            warning();
-        }
+        //MinecraftVersion.replaceLogger(HgLogger.getLogger());
+        //if (!isEnabled()) {
+        //    warning();
+        //}
     }
 
     /**
@@ -33,12 +29,13 @@ public class NBTApi {
         if (!enabled) {
             return item;
         }
-        NBTItem nbtItem = new NBTItem(item);
-        try {
-            nbtItem.mergeCompound(new NBTContainer(Util.getColString(value)));
-        } catch (Exception ignore) {
-        }
-        return nbtItem.getItem();
+        //NBTItem nbtItem = new NBTItem(item);
+        //try {
+        //    nbtItem.mergeCompound(new NBTContainer(Util.getColString(value)));
+        //} catch (Exception ignore) {
+        //}
+        //return nbtItem.getItem();
+        return item;
     }
 
     /**
@@ -51,23 +48,25 @@ public class NBTApi {
         if (!enabled) {
             return "NBT-API not available";
         }
-        NBTItem nbtItem = new NBTItem(item);
-        return nbtItem.getCompound().toString().replace("§", "&");
+        //NBTItem nbtItem = new NBTItem(item);
+        //return nbtItem.getCompound().toString().replace("§", "&");
+        return "NBT-API not available";
     }
     
-    public boolean isEnabled() {
+    final public boolean isEnabled() {
         try {
-            ItemStack itemStack = new ItemStack(Material.DIAMOND_SWORD);
-            NBTItem nbtItem = new NBTItem(itemStack);
-            nbtItem.mergeCompound(new NBTContainer("{Damage:0}"));
-            return true;
+            //ItemStack itemStack = new ItemStack(Material.DIAMOND_SWORD);
+            //NBTItem nbtItem = new NBTItem(itemStack);
+            //nbtItem.mergeCompound(new NBTContainer("{Damage:0}"));
+            this.enabled = false;
+            return false;
         } catch (Exception ignore) {
             this.enabled = false;
             return false;
         }
     }
 
-    public void warning() {
+    final public void warning() {
         Util.warning("NBT-API unavailable for your server version.");
         Util.warning(" - Some items may not be loaded correctly if you are using the 'data' option");
     }

@@ -79,52 +79,56 @@ public class HG extends JavaPlugin {
         items = new HashMap<>();
         bonusItems = new HashMap<>();
 
-		config = new Config(this);
-		metrics = new Metrics(this);
-		if (metrics.isEnabled()) {
-			Util.log("&7Metrics have been &aenabled");
-			new MetricsHandler(false);
-		}
-		else
-			Util.log("&7Metrics have been &cdisabled");
-		nbtApi = new NBTApi();
-
-		//MythicMob check
-		if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
-			mmMobManager = MythicMobs.inst().getMobManager();
-			Util.log("&7MythicMobs found, MythicMobs hook &aenabled");
-		} else {
-			Util.log("&7MythicMobs not found, MythicMobs hooks have been &cdisabled");
-		}
-		lang = new Language(this);
-		kitManager = new KitManager();
-		itemStackManager = new ItemStackManager(this);
-		mobConfig = new MobConfig(this);
-		randomItems = new RandomItems(this);
+        config = new Config(this);
+        metrics = new Metrics(this);
+        if (metrics.isEnabled()) {
+                Util.log("&7Metrics have been &aenabled");
+                //new MetricsHandler(false);
+        }
+        else
+                Util.log("&7Metrics have been &cdisabled");
+        nbtApi = new NBTApi();
+        if (nbtApi.isEnabled()) {
+                Util.log("&7NBT has been &aenabled");
+        }
+        else
+                Util.log("&7NBT has been &cdisabled");
+        //MythicMob check
+        if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
+                mmMobManager = MythicMobs.inst().getMobManager();
+                Util.log("&7MythicMobs found, MythicMobs hook &aenabled");
+        } else {
+                Util.log("&7MythicMobs not found, MythicMobs hooks have been &cdisabled");
+        }
+        lang = new Language(this);
+        kitManager = new KitManager();
+        itemStackManager = new ItemStackManager(this);
+        mobConfig = new MobConfig(this);
+        randomItems = new RandomItems(this);
         playerManager = new PlayerManager();
-		arenaconfig = new ArenaConfig(this);
-		killManager = new KillManager();
-		manager = new Manager(this);
-		leaderboard = new Leaderboard(this);
+        arenaconfig = new ArenaConfig(this);
+        killManager = new KillManager();
+        manager = new Manager(this);
+        leaderboard = new Leaderboard(this);
 
-		//PAPI check
-		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-			new Placeholders(this).register();
-			Util.log("&7PAPI found, Placeholders have been &aenabled");
-		} else {
-			Util.log("&7PAPI not found, Placeholders have been &cdisabled");
-		}
-		//mcMMO check
-		if (Bukkit.getPluginManager().getPlugin("mcMMO") != null) {
-		    if (Util.classExists("com.gmail.nossr50.events.skills.secondaryabilities.SubSkillEvent")) {
-                getServer().getPluginManager().registerEvents(new McmmoListeners(this), this);
-                Util.log("&7mcMMO found, mcMMO event hooks &aenabled");
+        //PAPI check
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+                new Placeholders(this).register();
+                Util.log("&7PAPI found, Placeholders have been &aenabled");
+        } else {
+                Util.log("&7PAPI not found, Placeholders have been &cdisabled");
+        }
+        //mcMMO check
+        if (Bukkit.getPluginManager().getPlugin("mcMMO") != null) {
+            if (Util.classExists("com.gmail.nossr50.events.skills.secondaryabilities.SubSkillEvent")) {
+            getServer().getPluginManager().registerEvents(new McmmoListeners(this), this);
+            Util.log("&7mcMMO found, mcMMO event hooks &aenabled");
             } else {
-		        Util.log("&7mcMMO classic found. HungerGames does not support mcMMO classic, mcMMO hooks &cdisabled");
+                        Util.log("&7mcMMO classic found. HungerGames does not support mcMMO classic, mcMMO hooks &cdisabled");
             }
-		} else {
-			Util.log("&7mcMMO not found, mcMMO event hooks have been &cdisabled");
-		}
+        } else {
+                Util.log("&7mcMMO not found, mcMMO event hooks have been &cdisabled");
+        }
 
         //noinspection ConstantConditions
         getCommand("hg").setExecutor(new CommandListener(this));

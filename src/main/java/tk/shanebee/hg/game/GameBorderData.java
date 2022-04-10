@@ -89,5 +89,16 @@ public class GameBorderData extends Data {
         assert world != null;
         world.getWorldBorder().reset();
     }
-
+    
+    public Bound getBorderBound() {
+        double x = game.gameArenaData.getBound().getLesserCorner().getX() - (borderSize/2) ;
+        double x2 = game.gameArenaData.getBound().getGreaterCorner().getX() - (borderSize/2);
+        double z = game.gameArenaData.getBound().getLesserCorner().getZ() - (borderSize/2);
+        double z2 = game.gameArenaData.getBound().getGreaterCorner().getZ() - (borderSize/2);
+        double y = game.gameArenaData.getBound().getLesserCorner().getY();
+        double y2 = game.gameArenaData.getBound().getGreaterCorner().getY();
+         
+        return new Bound(game.gameArenaData.getBound().getWorld().getName(),(int)x,(int)y,(int)z,(int)x2,(int)y2,(int)z2);        
+    }
+    
 }
